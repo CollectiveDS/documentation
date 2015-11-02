@@ -102,7 +102,7 @@ You can test this using cURL with the following command:
 * This example is for a CDS Backend API request:
 
 ```
-GET /channels/list?apikey=API_KEY
+GET /channel/list?apikey=API_KEY
 Host: api.collectivedigitalstudio.com
 Authorization: Bearer ACCESS_TOKEN
 ...
@@ -110,4 +110,4 @@ Authorization: Bearer ACCESS_TOKEN
 
 You can test this using cURL with the following command:
 
-`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/channels/list?apikey=API_KEY`
+`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/channel/list?apikey=API_KEY`
