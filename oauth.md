@@ -105,7 +105,33 @@ You can test this using cURL with the following command:
 GET /channel/list?apikey=API_KEY
 Host: api.collectivedigitalstudio.com
 Authorization: Bearer ACCESS_TOKEN
-...
+
+{
+  "pagination": {
+    "page": 1,
+    "per": 10,
+    "total": 1
+  },
+  "items": [
+    {
+      "description": null,
+      "thumb_url_high": "https://yt3.ggpht.com/-DUtWsATGBZA/AAAAAAAAAAI/AAAAAAAAAAA/RB3j_zG6CA8/s240-c-k-no/photo.jpg",
+      "subscribers": 3,
+      "comments": 0,
+      "videos": 4,
+      "cms": 8,
+      "vertical": "Comedy",
+      "thumb_url_default": "https://yt3.ggpht.com/-DUtWsATGBZA/AAAAAAAAAAI/AAAAAAAAAAA/RB3j_zG6CA8/s88-c-k-no/photo.jpg",
+      "title": "CollectiveDS Engineering",
+      "created_on": "2014-07-22T23:59:34Z",
+      "thumb_url_medium": "https://yt3.ggpht.com/-DUtWsATGBZA/AAAAAAAAAAI/AAAAAAAAAAA/RB3j_zG6CA8/s240-c-k-no/photo.jpg",
+      "id": "UCGuTn01c_NLBPIDc9dx9oig",
+      "added_cms": "2015-07-08T01:03:57Z",
+      "read_permission": null,
+      "views": 26
+    }
+  ]
+}
 ```
 
 You can test this using cURL with the following command:
