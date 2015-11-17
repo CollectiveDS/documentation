@@ -15,6 +15,7 @@ When a user first tries to perform an action that requires API authentication, y
 | client_id     | **Required.** The OAuth 2.0 client ID for your application. You are provided this value by CDS. |
 | redirect_uri  | **Required.** A registered redirect_uri for your client ID. Register valid redirect URIs for your application with CDS. |
 | response_type | **Required.** Determines whether the endpoint returns an authorization code. Set the parameter's value to code. |
+| state         | *Optional.* Allows for passing of unique data to the redirect_uri, arrives as `state` GET parameter. |
 
 ```
  https://api.collectivedigitalstudio.com/auth/authorize?
@@ -75,6 +76,7 @@ CDS will respond to your POST request by returning a JSON object that contains a
 }
 ```
 
+**Note:** To account for legacy clients, we also return the same token as `access-token`. This field is deprecated and will be removed soon. Use `access_token` moving forward.
 
 > Important: Your application should store both values in a secure, long-lived location that is accessible between different invocations of your application.
 
