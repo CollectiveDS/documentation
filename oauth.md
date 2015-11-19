@@ -99,7 +99,7 @@ Authorization: Bearer ACCESS_TOKEN
 
 You can test this using cURL with the following command:
 
-`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/me`
+`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/me?apikey=API_KEY`
 
 * This example is for a CDS Backend API request:
 
