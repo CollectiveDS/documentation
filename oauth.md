@@ -8,7 +8,7 @@ This flow has the following steps:
 
 > Note: Requests to CDS's authorization server must use https instead of http because the server is only accessible over SSL (HTTPs) and refuses HTTP connections.
 
-When a user first tries to perform an action that requires API authentication, you need to direct the user to CDS's authorization server at `https://api.collectivedigitalstudio.com/auth/authorize`. The table below identifies the request parameters that you need to (or can) include in the URL. Note that the request URI that you construct must contain properly URL-escaped parameter values.
+When a user first tries to perform an action that requires API authentication, you need to direct the user to CDS's authorization server at `https://api.studio71us.com/auth/authorize`. The table below identifies the request parameters that you need to (or can) include in the URL. Note that the request URI that you construct must contain properly URL-escaped parameter values.
 
 | Parameters | Explanation |
 | ---------- | ----------- |
@@ -18,7 +18,7 @@ When a user first tries to perform an action that requires API authentication, y
 | state         | *Optional.* Allows for passing of unique data to the redirect_uri, arrives as `state` GET parameter. |
 
 ```
- https://api.collectivedigitalstudio.com/auth/authorize?
+ https://api.studio71us.com/auth/authorize?
    client_id=FY320dzWyvRN0o79rZ&
    redirect_uri=http%3A%2F%2Flocalhost%2Foauth2callback&
    response_type=code
@@ -27,7 +27,7 @@ When a user first tries to perform an action that requires API authentication, y
 
 ## User Login
 
-In this step, if the user is not currently logged into CDS's system, they are required to login. In this case, the `/auth/authorize` endpoint will redirect them to `https://api.collectivedigitalstudio.com/auth/oauth/login` and provide them a HTML login page. Following a successful login, they will be re-directed to `/auth/authorize`
+In this step, if the user is not currently logged into CDS's system, they are required to login. In this case, the `/auth/authorize` endpoint will redirect them to `https://api.studio71us.com/auth/oauth/login` and provide them a HTML login page. Following a successful login, they will be re-directed to `/auth/authorize`
 
 ## Handle response from CDS
 
@@ -40,7 +40,7 @@ CDS will append a code parameter to the redirect_uri. This value is a temporary 
 
 ## Exchange authorization code for access token
 
-Assuming the user has granted access to your application, exchange the authorization code obtained for an access token. To do so, send a POST request to `https://api.collectivedigitalstudio.com/auth/token` that includes the following key-value pairs in the request body:
+Assuming the user has granted access to your application, exchange the authorization code obtained for an access token. To do so, send a POST request to `https://api.studio71us.com/auth/token` that includes the following key-value pairs in the request body:
 
 | Parameter | Explanation |
 | --------- | ----------- |
@@ -54,7 +54,7 @@ A sample request is displayed below:
 
 ```
 POST /auth/token HTTP/1.1
-Host: api.collectivedigitalstudio.com
+Host: api.studio71us.com
 Content-Type: application/x-www-form-urlencoded
 
 code=4/ux5gNj-_mIu4DOD_gNZdjX9EtOFf&
@@ -92,20 +92,20 @@ After obtaining an access token for a user, your application can use that token 
 
 ```
 GET /me HTTP/1.1
-Host: api.collectivedigitalstudio.com
+Host: api.studio71us.com
 Authorization: Bearer ACCESS_TOKEN
 ...
 ```
 
 You can test this using cURL with the following command:
 
-`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/me?apikey=API_KEY`
+`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.studio71us.com/me?apikey=API_KEY`
 
 * This example is for a CDS Backend API request:
 
 ```
 GET /channel/list?apikey=API_KEY
-Host: api.collectivedigitalstudio.com
+Host: api.studio71us.com
 Authorization: Bearer ACCESS_TOKEN
 
 {
@@ -124,7 +124,7 @@ Authorization: Bearer ACCESS_TOKEN
       "cms": 8,
       "vertical": "Comedy",
       "thumb_url_default": "https://yt3.ggpht.com/-DUtWsATGBZA/AAAAAAAAAAI/AAAAAAAAAAA/RB3j_zG6CA8/s88-c-k-no/photo.jpg",
-      "title": "CollectiveDS Engineering",
+      "title": "Studio71 Engineering",
       "created_on": "2014-07-22T23:59:34Z",
       "thumb_url_medium": "https://yt3.ggpht.com/-DUtWsATGBZA/AAAAAAAAAAI/AAAAAAAAAAA/RB3j_zG6CA8/s240-c-k-no/photo.jpg",
       "id": "UCGuTn01c_NLBPIDc9dx9oig",
@@ -138,4 +138,4 @@ Authorization: Bearer ACCESS_TOKEN
 
 You can test this using cURL with the following command:
 
-`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.collectivedigitalstudio.com/channel/list?apikey=API_KEY`
+`curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.studio71us.com/channel/list?apikey=API_KEY`
