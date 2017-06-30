@@ -6,14 +6,14 @@ This flow has the following steps:
 
 ## Request an access token
 
-> Note: Requests to CDS's authorization server must use https instead of http because the server is only accessible over SSL (HTTPs) and refuses HTTP connections.
+> Note: Requests to Studio71's authorization server must use https instead of http because the server is only accessible over SSL (HTTPs) and refuses HTTP connections.
 
-When a user first tries to perform an action that requires API authentication, you need to direct the user to CDS's authorization server at `https://api.studio71us.com/auth/authorize`. The table below identifies the request parameters that you need to (or can) include in the URL. Note that the request URI that you construct must contain properly URL-escaped parameter values.
+When a user first tries to perform an action that requires API authentication, you need to direct the user to Studio71's authorization server at `https://api.studio71us.com/auth/authorize`. The table below identifies the request parameters that you need to (or can) include in the URL. Note that the request URI that you construct must contain properly URL-escaped parameter values.
 
 | Parameters | Explanation |
 | ---------- | ----------- |
-| client_id     | **Required.** The OAuth 2.0 client ID for your application. You are provided this value by CDS. |
-| redirect_uri  | **Required.** A registered redirect_uri for your client ID. Register valid redirect URIs for your application with CDS. |
+| client_id     | **Required.** The OAuth 2.0 client ID for your application. You are provided this value by Studio71. |
+| redirect_uri  | **Required.** A registered redirect_uri for your client ID. Register valid redirect URIs for your application with Studio71. |
 | response_type | **Required.** Determines whether the endpoint returns an authorization code. Set the parameter's value to code. |
 | state         | *Optional.* Allows for passing of unique data to the redirect_uri, arrives as `state` GET parameter. |
 
@@ -27,13 +27,13 @@ When a user first tries to perform an action that requires API authentication, y
 
 ## User Login
 
-In this step, if the user is not currently logged into CDS's system, they are required to login. In this case, the `/auth/authorize` endpoint will redirect them to `https://api.studio71us.com/auth/oauth/login` and provide them a HTML login page. Following a successful login, they will be re-directed to `/auth/authorize`
+In this step, if the user is not currently logged into Studio71's system, they are required to login. In this case, the `/auth/authorize` endpoint will redirect them to `https://api.studio71us.com/auth/oauth/login` and provide them a HTML login page. Following a successful login, they will be re-directed to `/auth/authorize`
 
-## Handle response from CDS
+## Handle response from Studio71
 
-After the user consents or refuses to grant access to your application, CDS redirects the user to the redirect_uri that you specified in first step.
+After the user consents or refuses to grant access to your application, Studio71 redirects the user to the redirect_uri that you specified in first step.
 
-CDS will append a code parameter to the redirect_uri. This value is a temporary authorization code that you can exchange for an access token as discussed in following step.
+Studio71 will append a code parameter to the redirect_uri. This value is a temporary authorization code that you can exchange for an access token as discussed in following step.
 
 `http://localhost/oauth2callback?code=4/ux5gNj-_mIu4DOD_gNZdjX9EtOFf`
 
@@ -44,10 +44,10 @@ Assuming the user has granted access to your application, exchange the authoriza
 
 | Parameter | Explanation |
 | --------- | ----------- |
-| code          | **Required.** The authorization code that CDS returned to your redirect_uri in previous step. |
-| client_id     | **Required.** The OAuth 2.0 client ID for your application. This value is provided by CDS. |
-| client_secret | **Required.** The client secret associated with your client ID. This value is provided by CDS. |
-| redirect_uri  | **Required.** A registered redirect_uri for your client ID. This much match what you provided to CDS. |
+| code          | **Required.** The authorization code that Studio71 returned to your redirect_uri in previous step. |
+| client_id     | **Required.** The OAuth 2.0 client ID for your application. This value is provided by Studio71. |
+| client_secret | **Required.** The client secret associated with your client ID. This value is provided by Studio71. |
+| redirect_uri  | **Required.** A registered redirect_uri for your client ID. This much match what you provided to Studio71. |
 | grant_type    | **Required.** Set this value to `authorization_code`. |
 
 A sample request is displayed below:
@@ -66,7 +66,7 @@ grant_type=authorization_code
 
 ## Process response and store tokens
 
-CDS will respond to your POST request by returning a JSON object that contains a short-lived access token and a refresh token.
+Studio71 will respond to your POST request by returning a JSON object that contains a short-lived access token and a refresh token.
 
 ```
 {
@@ -88,7 +88,7 @@ After obtaining an access token for a user, your application can use that token 
 
 #### Specify the access token as the value of the Authorization: Bearer HTTP request header.
 
-* This example is for a CDS Backend API request:
+* This example is for a Studio71 Backend API request:
 
 ```
 GET /me HTTP/1.1
@@ -101,7 +101,7 @@ You can test this using cURL with the following command:
 
 `curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.studio71us.com/me?apikey=API_KEY`
 
-* This example is for a CDS Backend API request:
+* This example is for a Studio71 Backend API request:
 
 ```
 GET /channel/list?apikey=API_KEY
