@@ -1,37 +1,45 @@
-# Guide to explain and create CDSHUB jobs
+# Guide to explain deployments
 
-![Alt text](/../resources/images/deployment_jenkins_dashboard.png?raw=true "Dashboard Image")
+Deployments are handled by Jenkins, which is accessible through Tailscale at http://jenkins:8080
 
+If the URL is unreachable, ensure that Tailscale is enabled and the `jenkins` device shows up as a tagged device:
 
-## What is a job?
+![Tailscale Jenkins](/images/deployments_tailscale.png?raw=true)
 
-A job refers to a function that is executed at a certain time.  These can range from fetching (pulling data from an external source) and storing them in our AWS S3 bucket, using data we have in our S3 bucket to build a CSV and reupload in a new S3 area, etc.
-
-## Job execution process
-
-The job is defined in the MySQL database in the `cdshub/job_schedule` table with this format:
-  
-| job_name        	| payload_size 	| created_on          	| last_run_on         	| active 	| cron                    	|
-|-----------------	|--------------	|---------------------	|---------------------	|--------	|-------------------------	|
-| nielsen_reports 	| 1            	| 2022-01-11 15:49:54 	| 2023-01-21 12:00:00 	| 1      	| 0 0 12 * 7,14,21,28 * * 	|'
-
-This table holds the name of the job, the cron schedule with which to run the job, the max number of entities in the job's payload, and whether or not the job is active. 
-
-When a `job` is triggered by its `cron` schedule, the job is immediately sent to the `network` queue, which determines the job's payloads and queue (via `cdshub.service.queue`).
-
-The `cdshub.server.network/network-callback` function determines the correct entities to use as payloads for the given job name, looks up those entities in the DB (if necessary), and spawns jobs using `cdshub.service.queue/spawn-msg`, which automatically determines the correct queue for the job.
-
-The `cdshub.server.*` namespaces for fetch servers call a `cdshub.service.queue/register-jobs` function when defining job name -> callback fn hash-maps, which updates the job name -> queue mapping. Two functions, `cdshub.service.queue/spawn-msgs` and `cdshub.service.queue/spawn-msg` take a job name and one or more payloads, look up the appropriate queue from the job name -> queue mapping, builds messages for the job, and sends them to the appropriate queue. Moving a job from one server to another should only require moving the job from one `cdshub.server.*/jobs` hash-map to another; the job name -> queue mapping will be automatically updated and calls to `cdshub.service.queue/spawn-msg*` will automatically send the jobs to the appropriate queue.
+If the tagged device is not present, you will need to request Ben adds a permission to your Tailscale account
 
 
 
-## How to create a job
+## BE Deployments
 
-This assumes you have a function defined that the server queues can call.
+![Jenkins BE Deployments Image](/images/deployments_jenkins_dashboard.png?raw=true)
 
-1) Use `cdshub.service.queue/list-queues` to find whichever queue sounds like it fits your function the best
-1) Add your function to the queue's callback map found in `cdshub.server.{QUEUE_NAME}`.  The names vary, e.g. `misc-callback`, `run-report`, etc. but they all have a similar structure that is easy to find.  Typically is a `case` statment where the `job_name` is the case under test.  Add your `job_name` as part of the `case` statement and call your function in the body when the job matches.
-1) Make a SQL command to add your job to the `job_schedule` table, include it in the pull request of your ticket, and wait until peer review passes to execute and modify the prod database
-    ``` 
-    INSERT INTO job_schedule (job_name, payload_size, active, cron) VALUES ('{JOB_NAME}', {PAYLOAD_SIZE}, 1, '{CRON}');
-    ```
+### BE-CDSHUB
+
+This job handles building CDSHUB for prod and stage.  This is done through build parameters:
+
+
+![BE-CDSHUB Build Parameters](/images/deployments_be_cdshub.png?raw=true)
+![BE-CDSHUB Build Parameters](/images/deployments_be_cdshub_checkboxes.png?raw=true)
+
+- The `HASH` parameter is the github hash for the branch you wish to deploy.  Github hashes can be found multiple ways through the GUI, or the `git rev-parse HEAD` Git CLI command when on the desired branch.
+- The `HOSTS` parameter tells what exactly to deploy.  For new CDSHUB Clojure code changes, usually `api` is sufficient
+- The `TIMBRE` parameter tells what level of logging to report for fetch servers to and is reflected in Papertrail.  Shouldn't ever need to be changed
+- The `API_TIMBRE` parameter is essentially the same, but for the API server.  Shouldn't ever need to be changed
+- The `TARGET` parameter is important to decide what is being built.  Selecting `PROD` will deploy and become our live prod instance, and `STAGE` will deploy to our stage environment
+- The `REBUILD` checkbox when unchecked will look in s3 for a jar file and copy that already built jar file and deploy that.  Will not recompile any code as it will just run what was compiled the last time we deployed that hash
+- The `REBUILD_DEPS` checkbox will delete the `.m2` directory and pull all new dependencies
+- The `RUN_ANSIBLE` checkbox kicks off the Ansible servers prior to deploying
+- The other `SQL` fields are for adding new tables/columns on deployment to ensure BE tickets with table modifications will not cause table errors when deployed
+
+## How to rollback prod
+
+The basic workflow for rolling back prod should be finding the last known build that worked for your desired host (e.g. `api` or `all` if it's something to do with Clojure API issues) by using Jenkins and going through the most recent builds and selecting `Previous Build`
+
+![Jenkins BE Last Known Deployment](/images/deployments_be_cdshub_rollback_example.png?raw=true)
+
+Copying the `HASH` field and kicking off a deployment with the target `PROD` should be all you need as it will find the jar file in s3 and complete the deployment
+
+## How to update prod config
+
+If a server URL changes and needs to be updated in `config.json`, make the changes in the https://github.com/CollectiveDS/devops-config repo within the `prod-api` and `prod-fetch` areas.  The `master` branch will get sync'd to s3 and become the new `config.json` file when an `ansible` host is deployed
